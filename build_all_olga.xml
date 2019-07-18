@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<project name="SnakesAndLadders_Touch" basedir="." default="build-all">
+<!-- 1 Projects Being Built -->
+	<property name="Snakes_and_ladders_touch_key" value="touch"/>
+	<property name="Snakes_and_ladders_pw_key" value="paperwhite"/>
+	
+	<!-- 2 Swappable Directories -->	
+	<property name="swappable-directory" value="app_data" />
+	<echo message="${swappable-directory}" />
+		
+	<!--touch-->
+	<target name="copy-files-touch">
+		<delete-and-copy app="${Snakes_and_ladders_touch_key}" />	
+	</target>
+	
+	<!--pw-->
+	<target name="copy-files-pw">
+		<delete-and-copy app="${Snakes_and_ladders_pw_key}" />	
+	</target>
+	
+	<!-- 3 BUILD -->
+	<target name="clean-and-build-touch">
+		<antcall target="clean" />
+		<antcall target="copy-files-touch" />
+		<antcall target="build-it" />
+	</target>
+	
+	<target name="clean-and-build-pw">
+		<antcall target="clean" />
+		<antcall target="copy-files-pw" />
+		<antcall target="build-it" />
+	</target>
+	
+	<!-- END BUILD -->
+	<macrodef name="delete-and-copy">
+		<attribute name="app"/>
+		<sequential>			
+			<delete file="src/board.png"/>			
+			<delete file="src/mode.png"/>
+			<delete file="src/names.png"/>
+			<delete file="src/options.png"/>
+			<delete file="src/players.png"/>
+			<delete file="src/start.png"/>
+			<delete file="src/com/olmatech/kindle/snakes/SetValues.java"/>	
+			<delete file="${basedir}/kindlet.properties"/>
+			<delete file="${basedir}/MANIFEST.MF"/>			
+			
+			<copy file="${swappable-directory}/@{app}/board.png" todir="src"/>	
+			<copy file="${swappable-directory}/@{app}/mode.png" todir="src"/>	
+			<copy file="${swappable-directory}/@{app}/names.png" todir="src"/>	
+			<copy file="${swappable-directory}/@{app}/options.png" todir="src"/>	
+			<copy file="${swappable-directory}/@{app}/players.png" todir="src"/>	
+			<copy file="${swappable-directory}/@{app}/start.png" todir="src"/>		
+			<copy file="${swappable-directory}/@{app}/SetValues.java" todir="src/com/olmatech/kindle/snakes"/>	
+			<copy file="${swappable-directory}/@{app}/kindlet.properties" todir="${basedir}"/>
+			<copy file="${swappable-directory}/@{app}/MANIFEST.MF" todir="${basedir}"/>			
+		</sequential>
+	</macrodef>
+	
+	<target name="clean">
+		<delete dir="${basedir}/build" />
+	</target>
+	
+	<target name="build-it">		
+		<build-it-for-api-level api-level="2.0"/>
+	</target>
+	
+	<!-- build - developer  -->
+	<macrodef name="build-it-for-api-level">
+		<attribute name="api-level" />
+		<sequential>
+			<antcall target="clean" />
+			<mkdir dir="${basedir}/build/@{api-level}"/>
+			<ant inheritAll="false" antfile="build_olga.xml" target="copy-to-dropbox">
+				<property name="api.level" value="@{api-level}"/>
+			</ant>	
+		</sequential>
+	</macrodef>
+	
+	<target name="set-to-default">
+		<antcall target="clean" />
+		<delete-and-copy app="${Snakes_and_ladders_touch_key}" />
+	</target>	
+	
+<!--	<target name="build-all" depends="clean-and-build-touch,clean-and-build-pw,set-to-default" /> -->
+	
+	<target name="build-all" depends="clean-and-build-touch,set-to-default" /> 
+</project>
